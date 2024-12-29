@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Inventory System</h1>
+    </header>
+
+    <section class="location">
+      <label for="mainLocation">Main Location:</label>
+      <select id="mainLocation"></select>
+      <button id="addMainLocation">+ Add Main Location</button>
+
+      <label for="subLocation">Sub Location:</label>
+      <select id="subLocation"></select>
+      <button id="addSubLocation">+ Add Sub Location</button>
+    </section>
+
+    <section class="add-items">
+      <h2>Add Item</h2>
+      <input type="text" id="itemName" placeholder="Item Name">
+      <input type="text" id="itemDescription" placeholder="Description">
+      <input type="number" id="itemQuantity" placeholder="Quantity">
+      <select id="itemCategory">
+        <option value="Food">Food</option>
+        <option value="Tools">Tools</option>
+        <option value="Miscellaneous">Miscellaneous</option>
+      </select>
+      <button id="addItem">Add Item</button>
+    </section>
+
+    <section class="inventory-list">
+      <h2>Inventory List</h2>
+      <ul id="inventory"></ul>
+      <button id="clearInventory">Clear All</button>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
