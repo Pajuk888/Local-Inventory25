@@ -2,7 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const mainLocation = document.getElementById("mainLocation");
   const subLocation = document.getElementById("subLocation");
   const addMainLocation = document.getElementById("addMainLocation");
+  const editMainLocation = document.getElementById("editMainLocation");
+  const deleteMainLocation = document.getElementById("deleteMainLocation");
   const addSubLocation = document.getElementById("addSubLocation");
+  const editSubLocation = document.getElementById("editSubLocation");
+  const deleteSubLocation = document.getElementById("deleteSubLocation");
   const searchBox = document.getElementById("searchBox");
   const addNewItem = document.getElementById("addNewItem");
   const searchResults = document.getElementById("searchResults");
@@ -93,8 +97,71 @@ document.addEventListener("DOMContentLoaded", () => {
   addNewItem.addEventListener("click", () => {
     const name = searchBox.value.trim();
     if (name) {
-      addItemToInventory(name);
-      alert(`Added "${name}" to inventory`);
+      if (confirm(`Do you want to add "${name}" as a new item?`)) {
+        addItemToInventory(name);
+        alert(`Added "${name}" to inventory`);
+      }
+    }
+  });
+
+  addMainLocation.addEventListener("click", () => {
+    const loc = prompt("Enter Main Location:");
+    if (loc) {
+      inventory[loc] = {};
+      saveInventory();
+      loadLocations();
+    }
+  });
+
+  editMainLocation.addEventListener("click", () => {
+    const loc = mainLocation.value;
+    const newLoc = prompt("Enter New Name for Main Location:", loc);
+    if (newLoc && loc) {
+      inventory[newLoc] = inventory[loc];
+      delete inventory[loc];
+      saveInventory();
+      loadLocations();
+    }
+  });
+
+  deleteMainLocation.addEventListener("click", () => {
+    const loc = mainLocation.value;
+    if (loc && confirm(`Are you sure you want to delete Main Location "${loc}"?`)) {
+      delete inventory[loc];
+      saveInventory();
+      loadLocations();
+    }
+  });
+
+  addSubLocation.addEventListener("click", () => {
+    const loc = mainLocation.value;
+    const subloc = prompt("Enter Sub Location:");
+    if (loc && subloc) {
+      inventory[loc][subloc] = [];
+      saveInventory();
+      loadSubLocations(loc);
+    }
+  });
+
+  editSubLocation.addEventListener("click", () => {
+    const loc = mainLocation.value;
+    const subloc = subLocation.value;
+    const newSubLoc = prompt("Enter New Name for Sub Location:", subloc);
+    if (loc && subloc && newSubLoc) {
+      inventory[loc][newSubLoc] = inventory[loc][subloc];
+      delete inventory[loc][subloc];
+      saveInventory();
+      loadSubLocations(loc);
+    }
+  });
+
+  deleteSubLocation.addEventListener("click", () => {
+    const loc = mainLocation.value;
+    const subloc = subLocation.value;
+    if (loc && subloc && confirm(`Are you sure you want to delete Sub Location "${subloc}"?`)) {
+      delete inventory[loc][subloc];
+      saveInventory();
+      loadSubLocations(loc);
     }
   });
 
@@ -103,15 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
     combined = {};
     renderLog();
     renderCombinedTotals();
-  });
-
-  // Collapsible functionality
-  Array.from(document.getElementsByClassName("collapsible")).forEach(button => {
-    button.addEventListener("click", function () {
-      this.classList.toggle("active");
-      const content = this.nextElementSibling;
-      content.style.display = content.style.display === "block" ? "none" : "block";
-    });
   });
 
   loadLocations();
