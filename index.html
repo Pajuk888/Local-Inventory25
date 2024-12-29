@@ -12,34 +12,34 @@
       <h1>Inventory System</h1>
     </header>
 
+    <!-- Location Selection -->
     <section class="location">
-      <label for="mainLocation">Main Location:</label>
-      <select id="mainLocation"></select>
-      <button id="addMainLocation">+ Add Main Location</button>
-
-      <label for="subLocation">Sub Location:</label>
-      <select id="subLocation"></select>
-      <button id="addSubLocation">+ Add Sub Location</button>
+      <div>
+        <label for="mainLocation">Main Location:</label>
+        <select id="mainLocation"></select>
+        <button id="addMainLocation">+</button>
+      </div>
+      <div>
+        <label for="subLocation">Sub Location:</label>
+        <select id="subLocation"></select>
+        <button id="addSubLocation">+</button>
+      </div>
     </section>
 
-    <section class="add-items">
-      <h2>Add Item</h2>
-      <input type="text" id="itemName" placeholder="Item Name">
-      <input type="text" id="itemDescription" placeholder="Description">
-      <input type="number" id="itemQuantity" placeholder="Quantity">
-      <select id="itemCategory">
-        <option value="Food">Food</option>
-        <option value="Tools">Tools</option>
-        <option value="Miscellaneous">Miscellaneous</option>
-      </select>
-      <button id="addItem">Add Item</button>
+    <!-- Search Bar -->
+    <section class="search">
+      <input type="text" id="searchBox" placeholder="Search Items">
+      <ul id="searchResults"></ul>
     </section>
 
-    <section class="inventory-list">
-      <h2>Inventory List</h2>
-      <ul id="inventory"></ul>
-      <button id="clearInventory">Clear All</button>
+    <!-- Basket Section -->
+    <section class="basket">
+      <h2>Added Items</h2>
+      <ul id="basketList"></ul>
     </section>
+
+    <!-- Clear All -->
+    <button id="clearAll">Clear All</button>
   </div>
 
   <script src="script.js"></script>
