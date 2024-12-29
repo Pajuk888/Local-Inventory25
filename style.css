@@ -30,7 +30,7 @@ label {
 }
 
 input, select {
-  width: 100%;
+  width: calc(100% - 40px);
   margin-bottom: 10px;
   padding: 10px;
   font-size: 16px;
@@ -59,23 +59,33 @@ ul {
 }
 
 li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
   margin: 5px 0;
+  padding: 10px;
   background: #f0f0f0;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-li span {
-  flex: 1;
+.collapsible {
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 16px;
+  border-radius: 4px;
 }
 
-li button {
-  width: 30px;
-  height: 30px;
-  font-size: 20px;
-  padding: 0;
+.collapsible:hover {
+  background-color: #0056b3;
+}
+
+.content {
+  padding: 0 15px;
+  display: none;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  margin-top: 10px;
 }
