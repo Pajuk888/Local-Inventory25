@@ -3,99 +3,94 @@ document.addEventListener("DOMContentLoaded", () => {
   const subLocation = document.getElementById("subLocation");
   const addMainLocation = document.getElementById("addMainLocation");
   const addSubLocation = document.getElementById("addSubLocation");
-  const itemName = document.getElementById("itemName");
-  const itemDescription = document.getElementById("itemDescription");
-  const itemQuantity = document.getElementById("itemQuantity");
-  const itemCategory = document.getElementById("itemCategory");
-  const addItem = document.getElementById("addItem");
-  const inventory = document.getElementById("inventory");
-  const clearInventory = document.getElementById("clearInventory");
+  const searchBox = document.getElementById("searchBox");
+  const searchResults = document.getElementById("searchResults");
+  const basketList = document.getElementById("basketList");
+  const clearAll = document.getElementById("clearAll");
 
-  let data = JSON.parse(localStorage.getItem("inventoryData")) || {};
+  let inventory = JSON.parse(localStorage.getItem("inventory")) || {};
+  let basket = [];
 
-  const saveData = () => {
-    localStorage.setItem("inventoryData", JSON.stringify(data));
-  };
+  const saveInventory = () => localStorage.setItem("inventory", JSON.stringify(inventory));
 
   const loadLocations = () => {
-    mainLocation.innerHTML = Object.keys(data)
-      .map(location => `<option value="${location}">${location}</option>`)
+    mainLocation.innerHTML = Object.keys(inventory)
+      .map(loc => `<option value="${loc}">${loc}</option>`)
       .join("");
     if (mainLocation.value) loadSubLocations(mainLocation.value);
   };
 
-  const loadSubLocations = (location) => {
-    subLocation.innerHTML = Object.keys(data[location] || {})
-      .map(sub => `<option value="${sub}">${sub}</option>`)
+  const loadSubLocations = (loc) => {
+    subLocation.innerHTML = Object.keys(inventory[loc] || {})
+      .map(subloc => `<option value="${subloc}">${subloc}</option>`)
       .join("");
   };
 
-  const loadInventory = () => {
-    inventory.innerHTML = "";
-    const items = data[mainLocation.value]?.[subLocation.value] || [];
-    items.forEach(item => {
+  const addItemToBasket = (item) => {
+    const existing = basket.find(b => b.name === item.name);
+    if (existing) {
+      existing.quantity++;
+    } else {
+      basket.push({ ...item, quantity: 1 });
+    }
+    renderBasket();
+  };
+
+  const renderBasket = () => {
+    basketList.innerHTML = "";
+    basket.forEach(item => {
       const li = document.createElement("li");
-      li.innerHTML = `${item.name} (x${item.quantity}) - ${item.description} <button class="delete">Delete</button>`;
-      li.querySelector(".delete").addEventListener("click", () => {
-        const index = items.indexOf(item);
-        items.splice(index, 1);
-        saveData();
-        loadInventory();
+      li.innerHTML = `
+        <span>${item.name} (x${item.quantity})</span>
+        <button class="minus">-</button>
+        <button class="plus">+</button>
+      `;
+      li.querySelector(".minus").addEventListener("click", () => {
+        item.quantity--;
+        if (item.quantity === 0) basket = basket.filter(b => b !== item);
+        renderBasket();
       });
-      inventory.appendChild(li);
+      li.querySelector(".plus").addEventListener("click", () => {
+        item.quantity++;
+        renderBasket();
+      });
+      basketList.appendChild(li);
     });
   };
 
   addMainLocation.addEventListener("click", () => {
-    const location = prompt("Enter Main Location Name:");
-    if (location) {
-      data[location] = {};
-      saveData();
+    const loc = prompt("Enter Main Location:");
+    if (loc && !inventory[loc]) {
+      inventory[loc] = {};
+      saveInventory();
       loadLocations();
     }
   });
 
   addSubLocation.addEventListener("click", () => {
-    const sub = prompt("Enter Sub Location Name:");
-    if (sub) {
-      const location = mainLocation.value;
-      if (!data[location]) data[location] = {};
-      data[location][sub] = [];
-      saveData();
-      loadSubLocations(location);
+    const subloc = prompt("Enter Sub Location:");
+    if (subloc && !inventory[mainLocation.value]?.[subloc]) {
+      inventory[mainLocation.value][subloc] = [];
+      saveInventory();
+      loadSubLocations(mainLocation.value);
     }
   });
 
-  addItem.addEventListener("click", () => {
-    const location = mainLocation.value;
-    const sub = subLocation.value;
-    if (!location || !sub) {
-      alert("Please select a location and sub-location.");
-      return;
-    }
-    const item = {
-      name: itemName.value,
-      description: itemDescription.value,
-      quantity: parseInt(itemQuantity.value) || 0,
-      category: itemCategory.value,
-    };
-    data[location][sub].push(item);
-    saveData();
-    loadInventory();
+  searchBox.addEventListener("input", () => {
+    const query = searchBox.value.toLowerCase();
+    searchResults.innerHTML = inventory[mainLocation.value]?.[subLocation.value]
+      ?.filter(item => item.name.toLowerCase().includes(query))
+      .map(item => `<li>${item.name}</li>`)
+      .join("") || "";
+    Array.from(searchResults.querySelectorAll("li")).forEach((li, idx) =>
+      li.addEventListener("click", () => addItemToBasket(inventory[mainLocation.value][subLocation.value][idx]))
+    );
   });
 
-  clearInventory.addEventListener("click", () => {
-    if (confirm("Are you sure you want to clear all inventory data?")) {
-      data = {};
-      saveData();
-      loadLocations();
-      loadInventory();
-    }
+  clearAll.addEventListener("click", () => {
+    basket = [];
+    renderBasket();
   });
-
-  mainLocation.addEventListener("change", () => loadSubLocations(mainLocation.value));
-  subLocation.addEventListener("change", loadInventory);
 
   loadLocations();
-  loadInventory();
 });
